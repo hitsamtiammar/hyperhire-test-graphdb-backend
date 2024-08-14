@@ -3,19 +3,34 @@ from flask import request
 import os
 import subprocess
 import shutil
-from src.blazegraph import get_namespace
+from src.blazegraph import get_namespace, get_status_list
 
 @app.route('/')
 def index():
     return {"Data": "12345"}
+
+@app.route('/get-status')
+def get_status_list_local():
+    url = request.args.get('url')
+    if url is None:
+        return {'message': 'URL is required'}, 400
+    try:
+        namespaces = get_status_list(url)
+        return {'message': 'success', 'status_list': namespaces}
+    except Exception as err:
+        print(err)
+        return {'message': 'An error occured'}
 
 @app.route('/get-namespace')
 def get_namespace_local():
     url = request.args.get('url')
     if url is None:
         return {'message': 'URL is required'}, 400
-    namespaces = get_namespace(url)
-    return {'message': 'success', 'namespace': namespaces}
+    try:
+        namespaces = get_namespace(url)
+        return {'message': 'success', 'namespace': namespaces}
+    except Exception:
+        return {'message': 'An error occured'}
 
 @app.route('/create-database', methods=['POST'])
 def create_database():
