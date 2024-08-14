@@ -3,10 +3,19 @@ from flask import request
 import os
 import subprocess
 import shutil
+from src.blazegraph import get_namespace
 
 @app.route('/')
 def index():
     return {"Data": "12345"}
+
+@app.route('/get-namespace')
+def get_namespace_local():
+    url = request.args.get('url')
+    if url is None:
+        return {'message': 'URL is required'}, 400
+    namespaces = get_namespace(url)
+    return {'message': 'success', 'namespace': namespaces}
 
 @app.route('/create-database', methods=['POST'])
 def create_database():
@@ -49,9 +58,8 @@ def create_database():
     if os.path.exists(log_file):
         flag = 'a'
 
-    out_file = open(log_file, flag)
-
-    subprocess.Popen(str_command.split(' '), stdout=out_file)
+    with open(log_file, flag) as out_file:
+        subprocess.Popen(str_command.split(' '), stdout=out_file)
 
     return {
         'status': 'Success',

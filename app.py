@@ -1,5 +1,4 @@
 from server import app
-
 import src.route
 
 if __name__ == '__main__':
