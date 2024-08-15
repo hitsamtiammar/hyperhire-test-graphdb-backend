@@ -3,7 +3,7 @@ from flask import request
 import os
 import subprocess
 import shutil
-from src.blazegraph import get_namespace, get_status_list
+from src.blazegraph import get_namespace, get_status_list, create_namespace
 
 @app.route('/')
 def index():
@@ -30,7 +30,17 @@ def get_namespace_local():
         namespaces = get_namespace(url)
         return {'message': 'success', 'namespace': namespaces}
     except Exception:
-        return {'message': 'An error occured'}
+        return {'message': 'An error occured'}, 500
+
+@app.route('/create-namespace', methods=['POST'])
+def create_namespace_local():
+    name = request.json['name']
+    url = request.json['url']
+
+    result, status_code = create_namespace(url, name)
+
+    return result, status_code
+
 
 @app.route('/create-database', methods=['POST'])
 def create_database():
