@@ -4,6 +4,23 @@ from urllib.parse import urlparse
 
 import re
 
+def connect_to_db(url, port):
+    db_url = f"{url}:{port}/blazegraph"
+    response = requests.get(db_url)
+
+    print('db_url: ' + db_url)
+    
+    if response.status_code != 200:
+        return {'message': 'Failed to connect'}, 500
+
+    base_url = f"{url}:{port}"
+    status_list = get_status_list(base_url)
+    namespaces = get_namespace(base_url)
+    return {
+        'status_list': status_list,
+        'namespaces': namespaces
+    }, 200
+
 def fetch_url_data(url):
     response = requests.get(url)
     text_response = response.text
@@ -78,6 +95,7 @@ def create_namespace(url, name):
 
 def get_namespace(url):
     text_response = fetch_url_data(f"{url}/blazegraph/namespace?describe-each-named-graph=true")
+    print('text_response: ' + text_response)
     root = parseString(text_response)
 
     elements = root.getElementsByTagName('rdf:Description')

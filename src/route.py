@@ -3,7 +3,8 @@ from flask import request
 import os
 import subprocess
 import shutil
-from src.blazegraph import execute_ttl, get_namespace, get_status_list, create_namespace
+from src.blazegraph\
+    import connect_to_db, execute_ttl, get_namespace, get_status_list, create_namespace
 
 @app.route('/')
 def index():
@@ -19,7 +20,15 @@ def get_status_list_local():
         return {'message': 'success', 'status_list': namespaces}
     except Exception as err:
         print(err)
-        return {'message': 'An error occured'}
+        return {'message': 'An error occured', 'err': str(err)}
+    
+@app.route('/connect', methods=['POST'])
+def connect_to_db_local():
+    url = request.json['url']
+    port = request.json['port']
+    result, code = connect_to_db(url, port)
+
+    return result, code
 
 @app.route('/get-namespace')
 def get_namespace_local():
@@ -68,8 +77,6 @@ def create_database():
     if not os.path.exists(blazegraph_dir):
         os.mkdir(blazegraph_dir)
 
-    print('blazegraph_dir: ' + blazegraph_dir)
-    print('working_directory: ' + parent_dir)
     port = request.json['port']
     target_dir = os.path.join(blazegraph_dir, str(port))
 
