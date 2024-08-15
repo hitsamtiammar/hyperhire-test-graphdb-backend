@@ -5,21 +5,31 @@ import re
 
 def fetch_url_data(url):
     response = requests.get(url)
-    requests.post('aa')
     text_response = response.text
     return text_response
 
 def get_status_list(url):
     text_response = fetch_url_data(f"{url}/blazegraph/status")
     result = {}
-    print('status', text_response)
     listValues = ['runningQueriesCount', 'queryStartCount', 'queryErrorCount', 'queryPerSecond', 'operatorTasksPerQuery', 'operatorStartCount', 'operatorHaltCount','operatorActiveCount','deadlineQueueSize']
     for value in listValues:
          reg_result = re.findall(f"{value}=([0-9a-zA-Z]+)", text_response)
-         print('reg_result', reg_result)
          result[value] = int(reg_result[0]) if len(reg_result) > 0 else None
     
     return result
+
+def execute_ttl(url, namespace, contents):
+    sparql_url = f"{url}/blazegraph/namespace/{namespace}/sparql"
+    results = []
+    for content in contents:
+        response = requests.post(sparql_url, data=content, headers={
+            'Content-Type': 'application/x-turtle'
+        })
+        results.append({
+            'text': response.text,
+            'code': response.status_code
+        })
+    return results
 
 def create_namespace(url, name):
     prepare_text = f"""

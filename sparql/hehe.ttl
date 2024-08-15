@@ -1,0 +1,16 @@
+@prefix ex: <http://example.org/> .
+
+ex:John
+  ex:hasName "John" ;
+  ex:hasAge 30 ;
+  ex:hasOccupation "Software Engineer" .
+
+ex:Jane
+  ex:hasName "Jane" ;
+  ex:hasAge 25 ;
+  ex:hasOccupation "Data Scientist" .
+
+ex:Bob
+  ex:hasName "Bob" ;
+  ex:hasAge 40 ;
+  ex:hasOccupation "Manager" .

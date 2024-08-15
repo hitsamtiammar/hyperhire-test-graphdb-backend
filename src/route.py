@@ -3,7 +3,7 @@ from flask import request
 import os
 import subprocess
 import shutil
-from src.blazegraph import get_namespace, get_status_list, create_namespace
+from src.blazegraph import execute_ttl, get_namespace, get_status_list, create_namespace
 
 @app.route('/')
 def index():
@@ -41,6 +41,21 @@ def create_namespace_local():
 
     return result, status_code
 
+@app.route('/upload-ttl', methods=['POST'])
+def upload_ttl_local():
+    files = request.files
+
+    contents = []
+
+    for file in files.values():
+        content = file.read().decode('utf-8')
+        contents.append(content)
+    
+    url = request.form['url']
+    namespace = request.form['namespace']
+    result = execute_ttl(url, namespace, contents)
+
+    return result
 
 @app.route('/create-database', methods=['POST'])
 def create_database():
