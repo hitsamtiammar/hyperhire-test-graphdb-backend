@@ -4,7 +4,7 @@ import os
 import subprocess
 import shutil
 from src.blazegraph\
-    import connect_to_db, execute_ttl, get_namespace, get_status_list, create_namespace
+    import connect_to_db, delete_namespace, execute_ttl, get_namespace, get_status_list, create_namespace
 
 @app.route('/')
 def index():
@@ -28,6 +28,8 @@ def connect_to_db_local():
     port = request.json['port']
     result, code = connect_to_db(url, port)
 
+    if code != 200:
+        return { 'status': False }, code
     return result, code
 
 @app.route('/get-namespace')
@@ -45,10 +47,17 @@ def get_namespace_local():
 def create_namespace_local():
     name = request.json['name']
     url = request.json['url']
-
     result, status_code = create_namespace(url, name)
 
     return result, status_code
+
+@app.route('/delete-namespace', methods=['POST'])
+def delete_namespace_local():
+    name = request.json['name']
+    url = request.json['url']
+    response, code = delete_namespace(url, name)
+
+    return response, code
 
 @app.route('/upload-ttl', methods=['POST'])
 def upload_ttl_local():

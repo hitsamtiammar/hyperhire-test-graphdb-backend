@@ -18,7 +18,8 @@ def connect_to_db(url, port):
     namespaces = get_namespace(base_url)
     return {
         'status_list': status_list,
-        'namespaces': namespaces
+        'namespaces': namespaces,
+        'status': True
     }, 200
 
 def fetch_url_data(url):
@@ -33,9 +34,10 @@ def get_status_list(url):
     result = {}
     result['hostname'] = url_detail.hostname
     result['port'] = url_detail.port
+    result['scheme'] = url_detail.scheme
     result['databasetype'] = 'blazegraph'
 
-    listValues = ['runningQueriesCount', 'queryStartCount', 'queryErrorCount', 'queryPerSecond', 'operatorTasksPerQuery', 'operatorStartCount', 'operatorHaltCount','operatorActiveCount','deadlineQueueSize']
+    listValues = ['runningQueriesCount', 'queryStartCount', 'queryErrorCount', 'queryPerSecond', 'operatorTasksPerQuery', 'operatorStartCount', 'operatorHaltCount','operatorActiveCount','deadlineQueueSize', 'queryDoneCount']
     for value in listValues:
          reg_result = re.findall(f"{value}=([0-9a-zA-Z]+)", text_response)
          result[value] = int(reg_result[0]) if len(reg_result) > 0 else None
@@ -54,6 +56,15 @@ def execute_ttl(url, namespace, contents):
             'code': response.status_code
         })
     return results
+
+def delete_namespace(url, name):
+    new_url = f"{url}/blazegraph/namespace/{name}"
+    response = requests.delete(new_url)
+
+    if response.status_code == 200:
+        return 'Success', 200
+    return 'Failed', 500
+
 
 def create_namespace(url, name):
     prepare_text = f"""
@@ -95,7 +106,6 @@ def create_namespace(url, name):
 
 def get_namespace(url):
     text_response = fetch_url_data(f"{url}/blazegraph/namespace?describe-each-named-graph=true")
-    print('text_response: ' + text_response)
     root = parseString(text_response)
 
     elements = root.getElementsByTagName('rdf:Description')
