@@ -1,5 +1,6 @@
 import requests
 from xml.dom.minidom import parseString
+from urllib.parse import urlparse
 
 import re
 
@@ -9,8 +10,14 @@ def fetch_url_data(url):
     return text_response
 
 def get_status_list(url):
-    text_response = fetch_url_data(f"{url}/blazegraph/status")
+    url_send = f"{url}/blazegraph/status"
+    url_detail = urlparse(url_send)
+    text_response = fetch_url_data(url_send)
     result = {}
+    result['hostname'] = url_detail.hostname
+    result['port'] = url_detail.port
+    result['databasetype'] = 'blazegraph'
+
     listValues = ['runningQueriesCount', 'queryStartCount', 'queryErrorCount', 'queryPerSecond', 'operatorTasksPerQuery', 'operatorStartCount', 'operatorHaltCount','operatorActiveCount','deadlineQueueSize']
     for value in listValues:
          reg_result = re.findall(f"{value}=([0-9a-zA-Z]+)", text_response)
