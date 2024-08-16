@@ -15,6 +15,7 @@ executing==2.0.1
 fastjsonschema==2.20.0
 Flask==3.0.3
 Flask-Cors==4.0.1
+gunicorn==23.0.0
 idna==3.7
 ipython==8.12.3
 itsdangerous==2.2.0
@@ -40,7 +41,6 @@ prompt_toolkit==3.0.47
 pure_eval==0.2.3
 Pygments==2.18.0
 python-dateutil==2.9.0.post0
-pywin32==306
 pyzmq==26.1.0
 referencing==0.35.1
 requests==2.32.3
