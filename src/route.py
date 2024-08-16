@@ -4,7 +4,7 @@ import os
 import subprocess
 import shutil
 from src.blazegraph\
-    import connect_to_db, delete_namespace, execute_ttl, get_namespace, get_status_list, create_namespace
+    import connect_to_db, create_database_redirection, delete_namespace, execute_ttl, get_namespace, get_status_list, create_namespace
 
 @app.route('/')
 def index():
@@ -74,6 +74,17 @@ def upload_ttl_local():
     result = execute_ttl(url, namespace, contents)
 
     return result
+
+@app.route('/create-database-redirection', methods=['POST'])
+def create_database_redirection_local():
+    port = request.json['port']
+    url = request.json['url']
+    maximum_usage = request.json['minimumUsage'] if 'minimumUsage' in request.json else None 
+    minimum_usage = request.json['minimumUsage'] if 'minimumUsage' in request.json else None
+    result, status_code = create_database_redirection(url, port, maximum_usage, minimum_usage)
+
+    return result, status_code
+    
 
 @app.route('/create-database', methods=['POST'])
 def create_database():

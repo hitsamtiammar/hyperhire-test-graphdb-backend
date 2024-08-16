@@ -1,7 +1,7 @@
 import requests
 from xml.dom.minidom import parseString
 from urllib.parse import urlparse
-
+import json
 import re
 
 def connect_to_db(url, port):
@@ -65,6 +65,18 @@ def delete_namespace(url, name):
         return 'Success', 200
     return 'Failed', 500
 
+def create_database_redirection(url, port, maximum_usage, minimum_usage):
+    url_redirection = f"{url}/create-database"
+    print('url: ' + url_redirection)
+    response = requests.post(url_redirection, data=json.dumps({
+        'port': port, 'minimumUsage': minimum_usage, 'maximumUsage': maximum_usage
+    }), headers= { 'Content-Type': 'application/json' })
+
+    print('text response')
+    print(response.text)
+    if response.status_code == 200:
+        return 'Success', 200
+    return 'Failed', response.status_code
 
 def create_namespace(url, name):
     prepare_text = f"""
