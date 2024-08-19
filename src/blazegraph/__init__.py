@@ -72,8 +72,6 @@ def create_database_redirection(url, port, maximum_usage, minimum_usage):
         'port': port
     }
 
-    request_data['maximumUsage']
-
     if maximum_usage > 0:
         request_data['maximumUsage'] = maximum_usage
     else:
