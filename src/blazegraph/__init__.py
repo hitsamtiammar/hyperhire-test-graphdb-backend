@@ -68,9 +68,17 @@ def delete_namespace(url, name):
 def create_database_redirection(url, port, maximum_usage, minimum_usage):
     url_redirection = f"{url}/create-database"
     print('url: ' + url_redirection)
-    response = requests.post(url_redirection, data=json.dumps({
-        'port': port, 'minimumUsage': minimum_usage, 'maximumUsage': maximum_usage
-    }), headers= { 'Content-Type': 'application/json' })
+    request_data = {
+        'port': port
+    }
+
+    if maximum_usage > 0:
+        request_data['maximumUsage'] = maximum_usage
+    
+    if minimum_usage > 0:
+        request_data['minimumUsage'] = minimum_usage
+
+    response = requests.post(url_redirection, data=json.dumps(request_data), headers= { 'Content-Type': 'application/json' })
 
     print('text response')
     print(response.text)
