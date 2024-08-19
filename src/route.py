@@ -107,8 +107,8 @@ def create_database():
     if not os.path.exists(blazegraph_target_dir):
         shutil.copy(os.path.join(parent_dir, 'blazegraph.jar'), blazegraph_target_dir)
 
-    maximum_usage = request.json['minimumUsage'] if 'minimumUsage' in request.json else None 
-    minimum_usage = request.json['minimumUsage'] if 'minimumUsage' in request.json else None 
+    maximum_usage = request.json['minimumUsage'] if 'minimumUsage' in request.json and request.json['minimumUsage'] > 0 else 1 
+    minimum_usage = request.json['minimumUsage'] if 'minimumUsage' in request.json and request.json['minimumUsage'] > 0 else 1 
 
     maximum_usage_cmd = f"-Xmx{maximum_usage}g" if maximum_usage is not None else ''
     minimum_usage_cmd = f"-Xms{minimum_usage}g" if minimum_usage is not None else ''

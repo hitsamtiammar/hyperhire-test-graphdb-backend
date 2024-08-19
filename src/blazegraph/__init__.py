@@ -72,11 +72,17 @@ def create_database_redirection(url, port, maximum_usage, minimum_usage):
         'port': port
     }
 
+    request_data['maximumUsage']
+
     if maximum_usage > 0:
         request_data['maximumUsage'] = maximum_usage
-    
+    else:
+        request_data['maximumUsage'] = 1
+
     if minimum_usage > 0:
         request_data['minimumUsage'] = minimum_usage
+    else:
+        request_data['minimumUsage'] = 1
 
     response = requests.post(url_redirection, data=json.dumps(request_data), headers= { 'Content-Type': 'application/json' })
 
